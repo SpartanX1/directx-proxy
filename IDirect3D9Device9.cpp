@@ -8,11 +8,23 @@ INT frames = 0;
 INT lastFrame = 0;
 auto ts = std::chrono::system_clock::now() + std::chrono::seconds(1);
 auto fiveseconds = std::chrono::system_clock::now() + std::chrono::seconds(2);
-
+LPD3DXFONT	m_font;
+D3DCOLOR fontColor;
+RECT rct;
 
 HookDirect3D9Device9::HookDirect3D9Device9(IDirect3DDevice9* pOriginal)
 {
     hookPointer = pOriginal; // store the pointer to original object
+
+    // Define fonts and color
+    m_font = NULL;
+    D3DXCreateFont(hookPointer, 17, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Arial"), &m_font);
+    fontColor = D3DCOLOR_ARGB(255, 255, 255, 0);
+
+    rct.left = 40;
+    rct.right = 1680;
+    rct.top = 40;
+    rct.bottom = rct.top + 200;
 }
 
 HookDirect3D9Device9::~HookDirect3D9Device9(void)
@@ -234,16 +246,7 @@ HRESULT HookDirect3D9Device9::BeginScene(void)
 
 HRESULT HookDirect3D9Device9::EndScene(void)
 {
-    LPD3DXFONT	m_font = NULL;
-    D3DXCreateFont(hookPointer, 17, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Arial"), &m_font);
-    D3DCOLOR fontColor = D3DCOLOR_ARGB(255, 255, 255, 0);
     
-    RECT rct; //Font
-    rct.left = 40;
-    rct.right = 1680;
-    rct.top = 40;
-    rct.bottom = rct.top + 200;
-
     if (ts <= std::chrono::system_clock::now()) {
         lastFrame = frames;
         frames = 0;
